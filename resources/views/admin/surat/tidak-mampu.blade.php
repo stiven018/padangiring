@@ -113,7 +113,7 @@ table{
 
 <p align="center">
 
-Nomor : 103.000/KR-KP/IV/{{ date('Y') }}
+Nomor : {{ $surat->nomor_surat }}
 
 </p>
 
@@ -162,7 +162,10 @@ Menerangkan bahwa :
 
 <tr>
 <td>Tempat/Tgl Lahir</td>
-<td>: {{ $surat->tempat_lahir }}, {{ $surat->tanggal_lahir }}</td>
+<td>:
+    {{ $surat->tempat_lahir }},
+    {{ \Carbon\Carbon::parse($surat->tanggal_lahir)->translatedFormat('d F Y') }}
+</td>
 </tr>
 
 <tr>
@@ -203,9 +206,13 @@ LURAH
 
 <br><br><br><br>
 
-<b>YULITA BOROTODING, S.IP</b><br>
+<span style="border-bottom:1px solid #000; font-weight:bold;">
+YULITA BOROTODING, S.IP
+</span>
 
-NIP. 197708172007022020
+<br>
+
+NIP. 19701231 199303 2 001
 
 </td>
 

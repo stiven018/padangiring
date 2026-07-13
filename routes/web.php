@@ -3,22 +3,33 @@
 use Illuminate\Support\Facades\Route;
 use Carbon\Carbon;
 
+/*
+|--------------------------------------------------------------------------
+| Models
+|--------------------------------------------------------------------------
+*/
 use App\Models\Berita;
 use App\Models\Surat;
-use App\Models\Warga;
 use App\Models\Visitor;
-
-use App\Http\Controllers\BeritaController;
-use App\Http\Controllers\GaleriController;
-use App\Http\Controllers\PesanController;
-use App\Http\Controllers\SuratController;
-use App\Http\Controllers\WargaController;
-// use App\Http\Controllers\ProfilController;
-use App\Http\Controllers\LoginController;
+use App\Models\Warga;
 
 /*
 |--------------------------------------------------------------------------
-| HALAMAN PUBLIK
+| Controllers
+|--------------------------------------------------------------------------
+*/
+use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\GaleriController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PesanController;
+use App\Http\Controllers\SuratController;
+use App\Http\Controllers\WargaController;
+
+/*
+|--------------------------------------------------------------------------
+| HALAMAN PUBLIK WEBSITE
+|--------------------------------------------------------------------------
+| Route yang dapat diakses oleh semua masyarakat
 |--------------------------------------------------------------------------
 */
 
@@ -81,69 +92,56 @@ $beritas = Berita::latest()
 // ===============================
 
     return view('home', compact(
-    'totalWarga',
-    'totalKK',
-    'lakiLaki',
-    'perempuan',
-    'totalPengunjung',
-    'pengunjungHariIni',
-    'totalSurat',
-    'suratSelesai',
-    'beritas',
-));
+        'totalWarga',
+        'totalKK',
+        'lakiLaki',
+        'perempuan',
+        'totalPengunjung',
+        'pengunjungHariIni',
+        'totalSurat',
+        'suratSelesai',
+        'beritas',
+    ));
 
 });
 
-Route::get('/home', function () {
+    Route::get('/home', function () {
 
     $ip = request()->ip();
-
     $hariIni = now()->toDateString();
-
     $cek = Visitor::where('ip_address', $ip)
         ->where('visit_date', $hariIni)
         ->first();
-
     if (!$cek) {
-
         Visitor::create([
             'ip_address' => $ip,
             'visit_date' => $hariIni
         ]);
-
     }
 
     $totalPengunjung = Visitor::count();
-
     $pengunjungHariIni = Visitor::where(
         'visit_date',
         $hariIni
-    )->count();
-
+        )->count();
     $totalWarga = Warga::count();
-
     $totalKK = Warga::distinct('no_kk')->count('no_kk');
-
     $lakiLaki = Warga::where(
         'jenis_kelamin',
         'Laki-laki'
-    )->count();
-
+        )->count();
     $perempuan = Warga::where(
         'jenis_kelamin',
         'Perempuan'
-    )->count();
-
+        )->count();
     $totalSurat = Surat::count();
-
     $suratSelesai = Surat::where(
         'status',
         'Selesai'
-    )->count();
-
+        )->count();
     $beritas = Berita::latest()
-    ->take(6)
-    ->get();
+        ->take(6)
+        ->get();
 
     return view('home', compact(
         'totalWarga',
@@ -159,22 +157,20 @@ Route::get('/home', function () {
 
 });
 
-Route::get('/beranda', function () {
-    return view('home');
-});
+        Route::get('/beranda', function () {
+            return view('home');
+        });
 
+
+// Halaman Profil Kelurahan
 Route::get('/profil', function () {
-
     $totalWarga = Warga::count();
-
     $totalSurat = Surat::count();
-
     $hariIni = now()->toDateString();
-
     $pengunjungHariIni = Visitor::where(
         'visit_date',
         $hariIni
-    )->count();
+        )->count();
 
     return view('profil', compact(
         'totalWarga',
@@ -184,56 +180,47 @@ Route::get('/profil', function () {
 
 });
 
-Route::get('/kontak', function () {
-    return view('kontak');
-});
+        // Halaman Kontak
+        Route::get('/kontak', function () {
+            return view('kontak');
+        });
 
 
 Route::get('/login', [LoginController::class, 'index']);
-
 Route::post('/login', [LoginController::class, 'proses']);
-
 Route::get('/logout', [LoginController::class, 'logout']);
+
+
 /*
 |--------------------------------------------------------------------------
 | DASHBOARD ADMIN
 |--------------------------------------------------------------------------
+| Menampilkan statistik website dan pelayanan
+|--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->group(function () {
-
 Route::get('/dashboard', function () {
-
     $totalBerita = Berita::count();
-
     $suratDiproses = Surat::where(
         'status',
         'Diproses'
     )->count();
-
     $totalTracking = Surat::count();
-
     $totalWarga = Warga::count();
-
     $lakiLaki = Warga::where(
         'jenis_kelamin',
         'Laki-laki'
     )->count();
-
     $perempuan = Warga::where(
         'jenis_kelamin',
         'Perempuan'
     )->count();
-
     $bulan = [];
     $jumlahSurat = [];
 
     for ($i = 5; $i >= 0; $i--) {
-
         $tanggal = Carbon::now()->subMonths($i);
-
         $bulan[] = $tanggal->translatedFormat('M Y');
-
         $jumlahSurat[] = Surat::whereYear(
             'created_at',
             $tanggal->year
@@ -246,7 +233,6 @@ Route::get('/dashboard', function () {
     $agamaLabels = Warga::select('agama')
         ->groupBy('agama')
         ->pluck('agama');
-
     $agamaData = Warga::selectRaw('count(*) as total, agama')
         ->groupBy('agama')
         ->pluck('total');
@@ -268,36 +254,32 @@ Route::get('/dashboard', function () {
 
 /*
 |--------------------------------------------------------------------------
-| BERITA
+| BERITA WEBSITE
+|--------------------------------------------------------------------------
+| Berita publik dan pengelolaan berita admin
 |--------------------------------------------------------------------------
 */
 
 Route::get('/berita', [BeritaController::class, 'publik']);
-
 Route::get('/admin/berita', [BeritaController::class, 'index']);
-
 Route::get('/admin/berita/create', [BeritaController::class, 'create']);
-
 Route::post('/admin/berita/store', [BeritaController::class, 'store']);
-
 Route::get('/admin/berita/edit/{id}', [BeritaController::class, 'edit']);
-
 Route::post('/admin/berita/update/{id}', [BeritaController::class, 'update']);
-
 Route::get('/admin/berita/delete/{id}', [BeritaController::class, 'delete']);
 
 /*
 |--------------------------------------------------------------------------
-| LAYANAN SURAT
+| LAYANAN ADMINISTRASI
+|--------------------------------------------------------------------------
+| Pengajuan surat oleh masyarakat
 |--------------------------------------------------------------------------
 */
 
 Route::get('/layanan', [SuratController::class, 'layanan']);
-
 Route::post('/layanan', [SuratController::class, 'store']);
-
 Route::get('/tracking', [SuratController::class, 'tracking']);
-
+// Mengecek status surat berdasarkan kode tracking
 Route::post('/tracking', [SuratController::class, 'cekTracking']);
 
 /*
@@ -307,83 +289,71 @@ Route::post('/tracking', [SuratController::class, 'cekTracking']);
 */
 
 Route::get('/admin/surat', [SuratController::class, 'adminSurat']);
-
 Route::get('/admin/surat/edit/{id}', [SuratController::class, 'edit']);
-
 Route::post('/admin/surat/update/{id}', [SuratController::class, 'update']);
-
 Route::get('/admin/surat/delete/{id}', [SuratController::class, 'delete']);
-
 Route::get('/admin/surat/progress/{id}', [SuratController::class, 'progress']);
-
 Route::post('/admin/surat/progress-update/{id}', [SuratController::class, 'progressUpdate']);
-
+// Mencetak surat menjadi PDF
 Route::get('/admin/surat/cetak/{id}', [SuratController::class, 'cetakPdf']);
 
 /*
 |--------------------------------------------------------------------------
-| TRACKING ADMIN
+| TRACKING SURAT ADMIN
+|--------------------------------------------------------------------------
+| Monitoring seluruh pengajuan surat masyarakat
 |--------------------------------------------------------------------------
 */
 
 Route::get('/admin/tracking', [SuratController::class, 'adminTracking']);
-
 Route::get('/admin/tracking/delete/{id}', [SuratController::class, 'deleteTracking']);
-
-Route::get('/tes-tracking', function () {
-    return 'Tracking OK';
-});
+Route::get('/tes-tracking', function () {return 'Tracking OK';});
+// Mengubah format dan nomor surat otomatis
+Route::post('/admin/nomor-surat/update', [SuratController::class, 'updateNomorSurat']);
+Route::post('/admin/nomor-surat/reset', [SuratController::class, 'resetNomorSurat']);
 
 /*
 |--------------------------------------------------------------------------
 | PESAN MASYARAKAT
 |--------------------------------------------------------------------------
+| Kritik, saran, dan pertanyaan masyarakat
+|--------------------------------------------------------------------------
 */
 
 Route::post('/kontak/kirim', [PesanController::class, 'store']);
-
 Route::post('/kirim-pesan', [PesanController::class, 'store']);
-
 Route::get('/admin/pesan', [PesanController::class, 'index']);
-
 Route::get('/admin/pesan/delete/{id}', [PesanController::class, 'delete']);
 
 /*
 |--------------------------------------------------------------------------
 | DATA WARGA
 |--------------------------------------------------------------------------
+| CRUD data kependudukan
+|--------------------------------------------------------------------------
 */
 
 Route::get('/admin/warga', [WargaController::class, 'index']);
-
 Route::post('/admin/warga/store', [WargaController::class, 'store']);
-
 Route::post('/admin/warga/import', [WargaController::class, 'import']);
-
 Route::get('/admin/warga/edit/{id}',[WargaController::class,'edit']);
-
 Route::post('/admin/warga/update/{id}',[WargaController::class,'update']);
-
 Route::get('/admin/warga/delete/{id}', [WargaController::class, 'delete']);
-
 Route::get('/admin/warga/detail/{id}',[WargaController::class,'detail']);
-
 Route::get('/admin/warga/pdf',[WargaController::class,'pdf']);
-
 Route::delete('/admin/warga/hapus-semua',[WargaController::class, 'hapusSemua']);
 
 /*
 |--------------------------------------------------------------------------
-| GALERI
+| GALERI WEBSITE
+|--------------------------------------------------------------------------
+| Galeri publik dan admin
 |--------------------------------------------------------------------------
 */
 
 Route::get('/galeri', [GaleriController::class, 'publik']);
-
 Route::get('/admin/galeri', [GaleriController::class, 'admin']);
-
 Route::post('/admin/galeri/store', [GaleriController::class, 'store']);
-
 Route::get('/admin/galeri/delete/{id}', [GaleriController::class, 'delete']);
 
 /*
@@ -392,8 +362,6 @@ Route::get('/admin/galeri/delete/{id}', [GaleriController::class, 'delete']);
 |--------------------------------------------------------------------------
 */
 
-Route::get('/admin/pengaduan', function () {
-    return view('admin.pengaduan');
-});
-
-});
+    Route::get('/admin/pengaduan', function () {
+        return view('admin.pengaduan');
+    });

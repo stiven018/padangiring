@@ -285,6 +285,25 @@ button{
     <!-- FORM -->
 
     @if(!isset($surat))
+    @if(session('error'))
+
+        <div style="
+        background:#ffebee;
+        border:1px solid #ef5350;
+        color:#c62828;
+        padding:15px;
+        border-radius:12px;
+        margin-bottom:20px;
+        text-align:center;
+        font-weight:bold;
+        font-size:16px;
+        ">
+
+        ❌ {{ session('error') }}
+
+        </div>
+
+        @endif
 
 <form method="POST"
       action="{{ url('/tracking') }}">

@@ -127,69 +127,44 @@ class WargaController extends Controller
         );
     }
 
-    public function update(Request $request, $id)
-    {
-        $warga = Warga::findOrFail($id);
+ 
+public function update(Request $request, $id)
+{
+    $warga = Warga::findOrFail($id);
 
-        $request->validate([
+    $request->validate([
+        'nik' => 'required|digits:16',
+        'no_kk' => 'required|digits:16',
+        'nama' => 'required'
+    ], [
+        'nik.digits' => 'NIK harus 16 digit.',
+        'no_kk.digits' => 'Nomor KK harus 16 digit.'
+    ]);
 
-    'nik' => 'required|digits:16',
+    $warga->update([
+        'nik' => $request->nik,
+        'nama' => $request->nama,
+        'jenis_kelamin' => $request->jenis_kelamin,
+        'tempat_lahir' => $request->tempat_lahir,
+        'tanggal_lahir' => $request->tanggal_lahir,
+        'agama' => $request->agama,
+        'pekerjaan' => $request->pekerjaan,
+        'alamat' => $request->alamat,
+        'no_kk' => $request->no_kk,
+        'pendidikan' => $request->pendidikan,
+        'status_hubungan' => $request->status_hubungan,
+        'nama_ayah' => $request->nama_ayah,
+        'nama_ibu' => $request->nama_ibu,
+        'rt' => $request->rt,
+        'rw' => $request->rw,
+        'dusun' => $request->dusun,
+    ]);
 
-    'no_kk' => 'required|digits:16',
+    
 
-    'nama' => 'required'
-
-], [
-
-    'nik.digits' => 'NIK harus 16 digit.',
-
-    'no_kk.digits' => 'Nomor KK harus 16 digit.'
-
-]);
-
-        $warga->update([
-            
-
-            'nik' => $request->nik,
-
-            'nama' => $request->nama,
-
-            'jenis_kelamin' => $request->jenis_kelamin,
-
-            'tempat_lahir' => $request->tempat_lahir,
-
-            'tanggal_lahir' => $request->tanggal_lahir,
-
-            'agama' => $request->agama,
-
-            'pekerjaan' => $request->pekerjaan,
-
-            'alamat' => $request->alamat,
-
-            'no_kk' => $request->no_kk,
-
-            'pendidikan' => $request->pendidikan,
-
-            'status_hubungan' => $request->status_hubungan,
-
-            'nama_ayah' => $request->nama_ayah,
-
-            'nama_ibu' => $request->nama_ibu,
-
-            'rt' => $request->rt,
-
-            'rw' => $request->rw,
-
-            'dusun' => $request->dusun,
-
-        ]);
-
-        return redirect('/admin/warga')
-            ->with(
-                'success',
-                'Data warga berhasil diperbarui'
-            );
-    }
+    return redirect('/admin/warga')
+        ->with('success', 'Data warga berhasil diperbarui');
+}
 
         public function detail($id)
     {

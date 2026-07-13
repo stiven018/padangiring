@@ -119,8 +119,9 @@ table{
 
 <br>
 
-Nomor :
-312/KR-KP/IX/{{ date('Y') }}
+<p align="center">
+Nomor : {{ $surat->nomor_surat }}
+</p>
 
 </center>
 

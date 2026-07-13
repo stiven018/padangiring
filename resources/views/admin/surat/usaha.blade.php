@@ -162,7 +162,10 @@ Menerangkan bahwa :
 
 <tr>
 <td>Tempat/Tgl Lahir</td>
-<td>: {{ $surat->tempat_lahir }}, {{ $surat->tanggal_lahir }}</td>
+<td>:
+    {{ $surat->tempat_lahir }},
+    {{ \Carbon\Carbon::parse($surat->tanggal_lahir)->translatedFormat('d F Y') }}
+</td>
 </tr>
 
 <tr>
@@ -219,11 +222,13 @@ LURAH
 
 <br><br><br><br>
 
-<b>
-
+<span style="border-bottom:1px solid #000; font-weight:bold;">
 YULITA BOROTODING, S.IP
+</span>
 
-</b>
+<br>
+
+NIP. 19701231 199303 2 001
 
 </td>
 

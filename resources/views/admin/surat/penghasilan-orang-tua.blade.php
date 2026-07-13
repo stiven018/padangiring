@@ -124,7 +124,9 @@ SURAT KETERANGAN PENGHASILAN ORANG TUA
 <br>
 
 <b style="font-size:14px;">
-NO. 000.102/KR-KP/{{ date('Y') }}
+<p align="center">
+Nomor : {{ $surat->nomor_surat }}
+</p>
 </b>
 
 </center>

@@ -107,6 +107,60 @@ td:last-child{
     border-radius:10px;
 }
 
+.setting-box{
+    background:#fafafa;
+    border:1px solid #ddd;
+    border-radius:15px;
+    padding:20px;
+    margin-bottom:25px;
+}
+
+.setting-box h2{
+    margin-top:0;
+    color:#8B0000;
+}
+
+.setting-grid{
+    display:grid;
+    grid-template-columns:180px 1fr;
+    gap:15px;
+    align-items:center;
+}
+
+.setting-grid input{
+    width:100%;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+.preview{
+    margin-top:20px;
+    padding:15px;
+    background:#fff3cd;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+.btn-save{
+    background:#198754;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.btn-reset{
+    background:#dc3545;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-left:10px;
+}
+
 </style>
 </head>
 <body>
@@ -120,6 +174,120 @@ td:last-child{
 <div class="box">
 
     <h1>Tracking Surat Masyarakat</h1>
+    @if(session('success'))
+
+<div style="
+background:#d1e7dd;
+padding:15px;
+margin-bottom:20px;
+border-radius:10px;
+color:#0f5132;
+">
+
+{{ session('success') }}
+
+</div>
+
+@endif
+
+
+<div class="setting-box">
+
+<h2>Pengaturan Nomor Surat</h2>
+
+<form action="{{ url('/admin/nomor-surat/update') }}" method="POST">
+
+@csrf
+
+<div class="setting-grid">
+
+<label>Kode Surat</label>
+
+<input
+type="text"
+name="kode_surat"
+value="{{ $setting->kode_surat }}">
+
+<label>Kode Kelurahan</label>
+
+<input
+type="text"
+name="kode_kelurahan"
+value="{{ $setting->kode_kelurahan }}">
+
+<label>Nomor Surat Terakhir</label>
+
+<input
+type="number"
+name="nomor_terakhir"
+value="{{ $setting->nomor_terakhir }}">
+
+</div>
+
+<div class="preview">
+
+@php
+
+$bulanRomawi = [
+    1=>'I',
+    2=>'II',
+    3=>'III',
+    4=>'IV',
+    5=>'V',
+    6=>'VI',
+    7=>'VII',
+    8=>'VIII',
+    9=>'IX',
+    10=>'X',
+    11=>'XI',
+    12=>'XII'
+];
+
+$nomorBerikutnya = $setting->nomor_terakhir + 1;
+
+@endphp
+
+Nomor berikutnya yang akan digunakan :
+
+<br><br>
+
+<b>
+
+{{ $setting->kode_surat }}/{{ str_pad($nomorBerikutnya,3,'0',STR_PAD_LEFT) }}/{{ $setting->kode_kelurahan }}/{{ $bulanRomawi[date('n')] }}/{{ date('Y') }}
+
+</b>
+
+</div>
+
+<br>
+
+<button type="submit" class="btn-save">
+
+💾 Perbarui Nomor
+
+</button>
+
+</form>
+
+<form
+action="{{ url('/admin/nomor-surat/reset') }}"
+method="POST"
+style="display:inline;">
+
+@csrf
+
+<button
+type="submit"
+class="btn-reset"
+onclick="return confirm('Reset nomor surat ke 0?')">
+
+🔄 Reset Nomor Tahun Baru
+
+</button>
+
+</form>
+
+</div>
 
     <!-- FORM PENCARIAN -->
     <div style="

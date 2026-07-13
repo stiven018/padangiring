@@ -134,9 +134,7 @@ table{
 </h3>
 
 <p align="center">
-
-Nomor : 568.47/KR-KP/VII/{{ date('Y') }}
-
+Nomor : {{ $surat->nomor_surat }}
 </p>
 
 <br>
@@ -159,8 +157,10 @@ Yang bertanda tangan dibawah ini Kepala Kelurahan Padangiring menerangkan bahwa 
 
 <tr>
 <td>Tempat/Tanggal Lahir</td>
-<td>: {{ $surat->tempat_lahir_meninggal }},
-{{ $surat->tanggal_lahir_meninggal }}</td>
+<td>:
+{{ $surat->tempat_lahir_meninggal }},
+{{ \Carbon\Carbon::parse($surat->tanggal_lahir_meninggal)->translatedFormat('d F Y') }}
+</td>
 </tr>
 
 <tr>
@@ -180,7 +180,9 @@ Bahwa yang tersebut namanya di atas benar-benar telah meninggal dunia pada :
 
 <tr>
 <td width="220">Tanggal</td>
-<td>: {{ $surat->tanggal_kematian }}</td>
+<td>:
+{{ \Carbon\Carbon::parse($surat->tanggal_kematian)->translatedFormat('d F Y') }}
+</td>
 </tr>
 
 <tr>
@@ -250,9 +252,13 @@ LURAH
 
 <br><br><br><br>
 
-<b>YULITA BOROTODING, S.IP</b><br>
+<span style="border-bottom:1px solid #000; font-weight:bold;">
+YULITA BOROTODING, S.IP
+</span>
 
-NIP. 197708172007022020
+<br>
+
+NIP. 19701231 199303 2 001
 
 </td>
 

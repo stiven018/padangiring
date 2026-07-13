@@ -9,6 +9,7 @@ use App\Models\Pesan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\TrackingHistory;
 use App\Models\AhliWarisDetail;
+use App\Models\NomorSuratSetting;
 
 
 class SuratController extends Controller
@@ -144,19 +145,23 @@ class SuratController extends Controller
     }
 
     public function cekTracking(Request $request)
-    {
-        $surat = Surat::where(
-            'kode_tracking',
-            trim($request->kode_tracking)
-        )
-        ->with('histories')
-        ->first();
+{
+    $surat = Surat::where(
+        'kode_tracking',
+        trim($request->kode_tracking)
+    )
+    ->with('histories')
+    ->first();
 
-        return view(
-            'tracking',
-            compact('surat')
-        );
+    if (!$surat) {
+
+        return redirect('/tracking')
+            ->with('error', 'Kode tracking yang Anda masukkan tidak ditemukan.');
+
     }
+
+    return view('tracking', compact('surat'));
+}
 
     /* =========================
        ADMIN SURAT
@@ -252,7 +257,7 @@ class SuratController extends Controller
             ->with('success', 'Progress surat berhasil diperbarui');
     }
 
-        public function adminTracking(Request $request)
+       public function adminTracking(Request $request)
 {
     $keyword = $request->keyword;
 
@@ -264,7 +269,26 @@ class SuratController extends Controller
 
     })->latest()->get();
 
-    return view('admin.tracking.index', compact('surats', 'keyword'));
+    $setting = NomorSuratSetting::first();
+
+    if (!$setting) {
+
+        $setting = NomorSuratSetting::create([
+            'nomor_terakhir' => 0,
+            'kode_surat' => '470',
+            'kode_kelurahan' => 'KLPD'
+        ]);
+
+    }
+
+    return view(
+        'admin.tracking.index',
+        compact(
+            'surats',
+            'keyword',
+            'setting'
+        )
+    );
 }
 
         public function deleteTracking($id)
@@ -331,9 +355,92 @@ class SuratController extends Controller
                         break;
                 }
 
-                $pdf = Pdf::loadView($view, compact('surat'));
+                // Jika surat belum memiliki nomor surat
+if (!$surat->nomor_surat) {
 
-                return $pdf->stream('Surat-'.$surat->kode_tracking.'.pdf');
+    $setting = NomorSuratSetting::first();
+
+    $nomorBaru = $setting->nomor_terakhir + 1;
+
+    $bulanRomawi = [
+        1=>'I',
+        2=>'II',
+        3=>'III',
+        4=>'IV',
+        5=>'V',
+        6=>'VI',
+        7=>'VII',
+        8=>'VIII',
+        9=>'IX',
+        10=>'X',
+        11=>'XI',
+        12=>'XII'
+    ];
+
+    $surat->nomor_surat =
+        $setting->kode_surat.'/'
+        .str_pad($nomorBaru,3,'0',STR_PAD_LEFT).'/'
+        .$setting->kode_kelurahan.'/'
+        .$bulanRomawi[date('n')].'/'
+        .date('Y');
+
+    $surat->save();
+
+    $setting->nomor_terakhir = $nomorBaru;
+
+    $setting->save();
+}
+
+$pdf = Pdf::loadView($view, compact('surat'));
+
+return $pdf->stream('Surat-'.$surat->kode_tracking.'.pdf');
             }
+
+/* =========================
+   PENGATURAN NOMOR SURAT
+========================= */
+
+public function updateNomorSurat(Request $request)
+{
+    $request->validate([
+        'nomor_terakhir' => 'required|integer|min:0',
+        'kode_surat' => 'required',
+        'kode_kelurahan' => 'required',
+    ]);
+
+    $setting = NomorSuratSetting::first();
+
+    if (!$setting) {
+
+        $setting = new NomorSuratSetting();
+
+    }
+
+    $setting->nomor_terakhir = $request->nomor_terakhir;
+    $setting->kode_surat = $request->kode_surat;
+    $setting->kode_kelurahan = $request->kode_kelurahan;
+
+    $setting->save();
+
+    return redirect('/admin/tracking')
+        ->with('success', 'Nomor surat berhasil diperbarui.');
+}
+
+
+public function resetNomorSurat()
+{
+    $setting = NomorSuratSetting::first();
+
+    if ($setting) {
+
+        $setting->nomor_terakhir = 0;
+
+        $setting->save();
+
+    }
+
+    return redirect('/admin/tracking')
+        ->with('success', 'Nomor surat berhasil direset.');
+}
 
 }

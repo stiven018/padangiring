@@ -95,25 +95,33 @@ table{
 
 <div class="garis"></div>
 
-<table width="100%">
+<table width="100%" style="line-height:1.5;">
 
 <tr>
 
-<td width="55%">
+<td width="55%" valign="top">
 
-Nomor : 000.xxx/KR-KP/VII/{{ date('Y') }}
+<table style="width:auto; border-collapse:collapse;">
 
-<br>
+<tr>
+<td width="70">Nomor</td>
+<td width="10">:</td>
+<td>{{ $surat->nomor_surat }}</td>
+</tr>
 
-Perihal :
-<b><u>Permohonan Izin Keramaian</u></b>
+<tr>
+<td>Perihal</td>
+<td>:</td>
+<td><b><u>Permohonan Izin Keramaian</u></b></td>
+</tr>
+
+</table>
 
 </td>
 
-<td width="45%" align="left">
+<td width="45%" valign="top" align="left">
 
-Padangiring,
-{{ date('d F Y') }}
+Padangiring, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}
 
 <br><br>
 
@@ -125,7 +133,7 @@ Yth. Bapak Camat Rantetayo
 
 <br>
 
-Di-
+Di -
 
 <br>
 
@@ -136,6 +144,8 @@ Di-
 </tr>
 
 </table>
+
+<br>
 
 <p style="text-align:justify; line-height:1.8; text-indent:40px;">
 Berdasarkan laporan dari keluarga tentang perihal dimaksud di atas,maka 
@@ -221,13 +231,8 @@ Demikian permohonan ini saya buat dengan sebenarnya. Atas perhatian dan bantuan 
 </p>
 
 
-<table width="100%" style="margin-top:60px;">
+<table width="100%" style="margin-top:35px;">
 
-<tr>
-
-<td width="55%"></td>
-
-<table width="100%" style="margin-top:20px;">
 <tr>
 
 <td width="55%"></td>
@@ -240,21 +245,19 @@ Padangiring,
 <br><br>
 
 <b>LURAH,</b>
-<br><br>
 
-<br><br><br>
-<div style="white-space: nowrap;">
+<br><br><br><br>
+
 <b><u>YULITA BOROTODING, S.IP</u></b>
-</div>
 
+<br>
 
-<div style="white-space: nowrap;">
-NIP. 197708172007022020
-</div>
+NIP. 19770817 200702 2 020
 
 </td>
 
 </tr>
+
 </table>
 
 </body>

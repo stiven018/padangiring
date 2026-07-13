@@ -110,9 +110,7 @@ table{
 </h3>
 
 <p align="center">
-
-Nomor : 470/KR-KP/VII/{{ date('Y') }}
-
+Nomor : {{ $surat->nomor_surat }}
 </p>
 
 <br>
@@ -133,8 +131,11 @@ Yang bertanda tangan di bawah ini, Lurah Padangiring kecamatan Rantetayo Kabupat
 </tr>
 
 <tr>
-    <td>Tanggal Lahir</td>
-    <td>: {{ $surat->tanggal_lahir }}</td>
+<td>Tempat/Tgl Lahir</td>
+<td>:
+    {{ $surat->tempat_lahir }},
+    {{ \Carbon\Carbon::parse($surat->tanggal_lahir)->translatedFormat('d F Y') }}
+</td>
 </tr>
 
 <tr>
@@ -185,7 +186,7 @@ Data keluarga yang ditinggalkan sebagai ahli waris:
 
     <td>{{ $item->nik }}</td>
 
-    <td>{{ $item->tanggal_lahir }}</td>
+    <td>{{ \Carbon\Carbon::parse($item->tanggal_lahir)->translatedFormat('d F Y') }}</td>
 
     <td>{{ $item->hubungan }}</td>
 

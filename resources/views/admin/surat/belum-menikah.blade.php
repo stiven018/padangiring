@@ -112,9 +112,7 @@ table{
 </h3>
 
 <p align="center">
-
-Nomor : 207/KR-KP/VI/{{ date('Y') }}
-
+Nomor : {{ $surat->nomor_surat }}
 </p>
 
 <br>
@@ -150,11 +148,11 @@ Yang bertanda tangan di bawah ini Kepala Kelurahan Padangiring menerangkan bahwa
 </tr>
 
 <tr>
-
 <td>Tempat/Tgl Lahir</td>
-
-<td>: {{ $surat->tempat_lahir }}, {{ $surat->tanggal_lahir }}</td>
-
+<td>:
+    {{ $surat->tempat_lahir }},
+    {{ \Carbon\Carbon::parse($surat->tanggal_lahir)->translatedFormat('d F Y') }}
+</td>
 </tr>
 
 <tr>
@@ -209,7 +207,13 @@ LURAH
 
 <br><br><br><br>
 
-<b>YULITA BOROTODING, S.IP</b>
+<span style="border-bottom:1px solid #000; font-weight:bold;">
+YULITA BOROTODING, S.IP
+</span>
+
+<br>
+
+NIP. 19701231 199303 2 001
 
 </td>
 

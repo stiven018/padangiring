@@ -145,12 +145,8 @@ text-decoration:underline;
     <u>SURAT KETERANGAN IZIN PERJALANAN</u>
 </h3>
 
-<p align="center"
-style="
-margin-top:0;
-font-size:13px;
-">
-Nomor : 326/KR-KP/IX/{{ date('Y') }}
+<p align="center">
+Nomor : {{ $surat->nomor_surat }}
 </p>
 
 <br>
