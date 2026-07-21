@@ -118,7 +118,7 @@ table{
 </h3>
 
 <p align="center">
-Nomor : 400.198/KR-KP/VI/{{ date('Y') }}
+Nomor : {{ $surat->nomor_surat }}
 </p>
 
 <br>
