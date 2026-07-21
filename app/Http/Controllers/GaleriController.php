@@ -11,7 +11,7 @@ class GaleriController extends Controller
     {
         $galeris = Galeri::latest()->get();
 
-        return view('admin.galeri.index', compact('galeris'));
+        return view('admin.Galeri.index', compact('galeris'));
     }
 
     public function store(Request $request)
